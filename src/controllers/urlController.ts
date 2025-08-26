@@ -2,7 +2,6 @@ import { type Request, type Response } from "express";
 import Url from "../models/Url";
 import { generateCode } from "../utils/generateCode";
 
-// Shortening a long URL
 export const shortenUrl = async (
   req: Request,
   res: Response
@@ -15,10 +14,8 @@ export const shortenUrl = async (
       return;
     }
 
-    // Generating unique shortCode via utility
     const shortCode = generateCode();
 
-    // Saving to DB
     const newUrl = await Url.create({ shortCode, longUrl });
 
     const baseUrl =
@@ -35,7 +32,6 @@ export const shortenUrl = async (
   }
 };
 
-// Redirecting to original URL
 export const redirectUrl = async (req: Request, res: Response) => {
   try {
     const { code } = req.params;

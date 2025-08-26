@@ -7,7 +7,6 @@ export interface IUrl extends Document {
   createdAt: Date;
 }
 
-// Defining schema
 const UrlSchema = new Schema<IUrl>({
   shortCode: {
     type: String,

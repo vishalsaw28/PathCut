@@ -9,7 +9,7 @@ const connectDB = async (): Promise<void> => {
     console.log(" Connecting to MongoDB...");
 
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      dbName: process.env.DB_NAME || "urlshortener", // fallback DB name
+      dbName: process.env.DB_NAME || "urlshortener",
     });
 
     console.log(` MongoDB Connected: ${conn.connection.host}`);

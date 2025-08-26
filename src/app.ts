@@ -10,14 +10,11 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// API Routes
 app.use("/api", urlRoutes);
 
-// Redirecting Route
 app.get("/:code", redirectUrl);
 
 mongoose
