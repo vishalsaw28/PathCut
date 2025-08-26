@@ -32,18 +32,33 @@ export const shortenUrl = async (
   }
 };
 
-export const redirectUrl = async (req: Request, res: Response) => {
+export const getAllUrls = async (
+  _req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const urls = await Url.find().sort({ createdAt: -1 });
+    res.json(urls);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch URLs" });
+  }
+};
+
+export const redirectUrl = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { code } = req.params;
     const url = await Url.findOne({ shortCode: code });
 
     if (url) {
-      return res.redirect(url.longUrl);
+      res.redirect(url.longUrl);
     } else {
-      return res.status(404).json({ message: "URL not found" });
+      res.status(404).json({ message: "URL not found" });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
