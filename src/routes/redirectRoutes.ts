@@ -3,7 +3,7 @@ import Url from "../models/Url";
 
 const router = express.Router();
 
-// Redirect shortCode → long URL
+// Redirecting shortCode to long URL
 router.get("/:shortCode", async (req, res) => {
   try {
     const url = await Url.findOne({ shortCode: req.params.shortCode });
@@ -12,7 +12,7 @@ router.get("/:shortCode", async (req, res) => {
       return res.status(404).json({ message: "URL not found" });
     }
 
-    // increment clicks
+    // incrementing the no of clicks
     url.clicks += 1;
     await url.save();
 

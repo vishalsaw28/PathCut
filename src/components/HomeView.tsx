@@ -43,13 +43,13 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
       const data = await res.json();
 
       if (res.ok) {
-        setShortUrl(data.shortUrl); // ✅ backend shortUrl
+        setShortUrl(data.shortUrl); // backend shortUrl
         setSuccess("URL shortened successfully!");
         setLongUrl("");
         addUrl({
           id: urls.length + 1,
           shortCode: data.shortCode,
-          shortUrl: data.shortUrl, // ✅ FIX: include shortUrl
+          shortUrl: data.shortUrl,
           longUrl: data.longUrl,
           clicks: data.clicks ?? 0,
           created: new Date().toISOString().split("T")[0],

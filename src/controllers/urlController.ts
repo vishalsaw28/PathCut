@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import Url from "../models/Url";
 import { generateCode } from "../utils/generateCode";
 
-// ✅ Shorten a long URL
+// Shortening a long URL
 export const shortenUrl = async (
   req: Request,
   res: Response
@@ -15,14 +15,12 @@ export const shortenUrl = async (
       return;
     }
 
-    // Generate unique shortCode via utility
+    // Generating unique shortCode via utility
     const shortCode = generateCode();
 
-    // Save to DB
+    // Saving to DB
     const newUrl = await Url.create({ shortCode, longUrl });
 
-    // ✅ Always resolve correct BASE_URL
-    // urlController.ts
     const baseUrl =
       process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? 5000}`;
 
@@ -37,7 +35,7 @@ export const shortenUrl = async (
   }
 };
 
-// ✅ Redirect to original URL
+// Redirecting to original URL
 export const redirectUrl = async (req: Request, res: Response) => {
   try {
     const { code } = req.params;

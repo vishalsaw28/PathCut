@@ -10,7 +10,7 @@ const UrlShortener = () => {
     e.preventDefault();
     try {
       const data: UrlData = await shortenUrl(longUrl);
-      setShortUrl(data.shortUrl); // ✅ backend-generated
+      setShortUrl(data.shortUrl);
     } catch (error) {
       console.error(error);
     }

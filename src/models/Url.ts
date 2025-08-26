@@ -1,7 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-
-// Define interface for TypeScript type safety
-
 export interface IUrl extends Document {
   _id: string;
   shortCode: string;
@@ -10,7 +7,7 @@ export interface IUrl extends Document {
   createdAt: Date;
 }
 
-// Define schema
+// Defining schema
 const UrlSchema = new Schema<IUrl>({
   shortCode: {
     type: String,
@@ -31,6 +28,5 @@ const UrlSchema = new Schema<IUrl>({
   },
 });
 
-// Export model
 const Url = model<IUrl>("Url", UrlSchema);
 export default Url;

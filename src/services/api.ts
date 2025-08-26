@@ -1,5 +1,4 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-// 👆 frontend env variable fallback
 
 export const shortenUrl = async (longUrl: string) => {
   const res = await fetch(`${API_BASE_URL}/api/shorten`, {
