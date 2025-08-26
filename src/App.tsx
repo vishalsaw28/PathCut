@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import UrlShortener from "./components/UrlShortener";
 
 function App() {
+  useEffect;
   const [currentView, setCurrentView] = useState<ViewType>("home");
   const [urls, setUrls] = useState<UrlData[]>([]);
   useEffect(() => {
