@@ -17,6 +17,10 @@ app.use(express.json());
 
 app.use("/api", urlRoutes);
 
+app.get("/", (_req, res) => {
+  res.send("🚀 URL Shortener Backend is running! Use /api for API endpoints.");
+});
+
 app.use("/", redirectRoutes);
 
 app.get("/api/ping", (_req, res) => {
