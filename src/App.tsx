@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import type { UrlData, ViewType } from "./types";
+import "./index.css";
 import Header from "./components/Header";
 import HomeView from "./components/HomeView";
 import AdminView from "./components/AdminView";
 import Footer from "./components/Footer";
-import type { UrlData, ViewType } from "./types";
-import "./index.css";
+import UrlShortener from "./components/UrlShortener";
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>("home");
@@ -51,6 +52,7 @@ function App() {
         )}
       </main>
       <Footer />
+      <UrlShortener />
     </div>
   );
 }

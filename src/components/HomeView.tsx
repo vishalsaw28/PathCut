@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { UrlData } from "../types";
 import CopyButton from "./CopyButton";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 interface HomeViewProps {
   urls: UrlData[];
   addUrl: (url: UrlData) => void;
@@ -13,23 +15,16 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const generateShortCode = (): string => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    return Array.from({ length: 6 }, () =>
-      chars.charAt(Math.floor(Math.random() * chars.length))
-    ).join("");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!longUrl) {
       setError("Please enter a URL");
       return;
     }
+
     try {
-      new URL(longUrl);
+      new URL(longUrl); // validate
     } catch {
       setError("Please enter a valid URL");
       return;
@@ -38,19 +33,33 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
     setError("");
     setSuccess("");
 
-    const shortCode = generateShortCode();
-    const newUrl: UrlData = {
-      id: urls.length + 1,
-      shortCode,
-      longUrl,
-      clicks: 0,
-      created: new Date().toISOString().split("T")[0],
-    };
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/shorten`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ longUrl }),
+      });
 
-    addUrl(newUrl);
-    setShortUrl(`http://localhost:3000/${shortCode}`);
-    setSuccess("URL shortened successfully!");
-    setLongUrl("");
+      const data = await res.json();
+
+      if (res.ok) {
+        setShortUrl(data.shortUrl); // ✅ backend shortUrl
+        setSuccess("URL shortened successfully!");
+        setLongUrl("");
+        addUrl({
+          id: urls.length + 1,
+          shortCode: data.shortCode,
+          shortUrl: data.shortUrl, // ✅ FIX: include shortUrl
+          longUrl: data.longUrl,
+          clicks: data.clicks ?? 0,
+          created: new Date().toISOString().split("T")[0],
+        });
+      } else {
+        setError(data.error || "Something went wrong");
+      }
+    } catch {
+      setError("Server error. Please try again later.");
+    }
   };
 
   return (

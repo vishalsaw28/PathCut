@@ -1,5 +1,7 @@
 import type { UrlData } from "../types";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const truncateText = (text: string, maxLength: number) =>
   text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
 
@@ -19,7 +21,15 @@ const URLTable: React.FC<{ urls: UrlData[] }> = ({ urls }) => {
       <tbody>
         {urls.map((url) => (
           <tr key={url.id}>
-            <td>http://localhost:3000/{url.shortCode}</td>
+            <td>
+              <a
+                href={`${API_BASE_URL}/${url.shortCode}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {`${API_BASE_URL}/${url.shortCode}`}
+              </a>
+            </td>
             <td>{truncateText(url.longUrl, 40)}</td>
             <td>
               <span className="stat-count">{url.clicks}</span> clicks
