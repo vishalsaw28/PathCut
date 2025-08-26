@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": " vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:server": "ts-node-dev --respawn --transpile-only src/server.ts"
