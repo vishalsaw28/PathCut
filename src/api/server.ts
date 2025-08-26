@@ -2,9 +2,9 @@ import express, { type Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
-import urlRoutes from "./routes/urlRoutes";
-import redirectRoutes from "./routes/redirectRoutes";
-import connectDB from "./config/db";
+import urlRoutes from "../routes/urlRoutes";
+import redirectRoutes from "../routes/redirectRoutes";
+import connectDB from "../config/db";
 
 dotenv.config();
 
