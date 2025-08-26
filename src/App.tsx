@@ -12,7 +12,9 @@ function App() {
   const [urls, setUrls] = useState<UrlData[]>([]);
   useEffect(() => {
     const fetchUrls = async () => {
-      const res = await fetch("/api/admin/urls");
+      const res = await fetch(
+        "https://url-shortener-api.onrender.com/api/admin/urls"
+      );
       const data = await res.json();
       setUrls(data);
     };
