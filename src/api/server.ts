@@ -27,7 +27,7 @@ app.use(express.json());
 app.use("/api", urlRoutes);
 
 app.get("/", (_req, res) => {
-  res.send("🚀 URL Shortener Backend is running! Use /api for API endpoints.");
+  res.send("URL Shortener Backend is running! Use /api for API endpoints.");
 });
 
 app.use("/", redirectRoutes);
@@ -41,5 +41,5 @@ app.get("/api/ping", (_req, res) => {
 });
 
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`🚀 Server running at ${BASE_URL}`));
+  app.listen(PORT, () => console.log(` Server running at ${BASE_URL}`));
 });
