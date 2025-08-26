@@ -1,7 +1,9 @@
 import { Schema, model, Document } from "mongoose";
 
 // Define interface for TypeScript type safety
+
 export interface IUrl extends Document {
+  _id: string;
   shortCode: string;
   longUrl: string;
   clicks: number;
