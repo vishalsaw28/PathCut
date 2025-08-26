@@ -20,7 +20,7 @@ const URLTable: React.FC<{ urls: UrlData[] }> = ({ urls }) => {
       </thead>
       <tbody>
         {urls.map((url) => (
-          <tr key={url.id}>
+          <tr key={url._id}>
             <td>
               <a
                 href={`${API_BASE_URL}/${url.shortCode}`}
@@ -34,7 +34,7 @@ const URLTable: React.FC<{ urls: UrlData[] }> = ({ urls }) => {
             <td>
               <span className="stat-count">{url.clicks}</span> clicks
             </td>
-            <td>{url.created}</td>
+            <td>{new Date(url.created).toLocaleString()}</td>
           </tr>
         ))}
       </tbody>

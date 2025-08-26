@@ -14,3 +14,8 @@ export const shortenUrl = async (longUrl: string) => {
 
   return await res.json();
 };
+export const getAllUrls = async () => {
+  const res = await fetch(`${API_BASE_URL}/api/admin/urls`);
+  if (!res.ok) throw new Error("Failed to fetch URLs");
+  return await res.json();
+};
