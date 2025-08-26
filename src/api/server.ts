@@ -12,7 +12,16 @@ const app: Application = express();
 const PORT = process.env.PORT || 5000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-app.use(cors());
+const allowedOrigins = ["http://localhost:5173", "https://path-cut.vercel.app"];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/api", urlRoutes);
