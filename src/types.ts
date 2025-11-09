@@ -7,7 +7,8 @@ export interface UrlData {
   longUrl: string;
   shortUrl: string;
   clicks: number;
-  created: string;
+  created?: string | Date;
+  createdAt?: string | Date;
 }
 
 export type ViewType = "home" | "admin";

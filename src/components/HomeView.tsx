@@ -52,7 +52,8 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
           shortUrl: data.shortUrl,
           longUrl: data.longUrl,
           clicks: data.clicks ?? 0,
-          created: new Date().toISOString().split("T")[0],
+          created: new Date().toLocaleDateString("en-IN"),
+          _id: undefined,
         });
       } else {
         setError(data.error || "Something went wrong");

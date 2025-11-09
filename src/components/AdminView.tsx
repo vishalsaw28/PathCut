@@ -3,7 +3,7 @@ import type { UrlData } from "../types";
 import URLTable from "./UrlTable";
 import { getAllUrls } from "../services/api";
 
-const AdminView = () => {
+const AdminView: React.FC = () => {
   const [urls, setUrls] = useState<UrlData[]>([]);
   const [loading, setLoading] = useState(true);
 

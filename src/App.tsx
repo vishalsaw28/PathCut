@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
 import type { UrlData, ViewType } from "./types";
 import "./index.css";
 import Header from "./components/Header";
@@ -8,19 +9,28 @@ import Footer from "./components/Footer";
 import UrlShortener from "./components/UrlShortener";
 
 function App() {
-  useEffect;
   const [currentView, setCurrentView] = useState<ViewType>("home");
   const [urls, setUrls] = useState<UrlData[]>([]);
+
   useEffect(() => {
     const fetchUrls = async () => {
-      const res = await fetch("https://pathcut-5.onrender.com/api/admin/urls");
-      const data = await res.json();
-      setUrls(data);
+      try {
+        const res = await fetch(
+          "https://pathcut-5.onrender.com/api/admin/urls"
+        );
+        if (!res.ok) throw new Error("Failed to fetch URLs");
+        const data = await res.json();
+        setUrls(data);
+      } catch (error) {
+        console.error("Error fetching URLs:", error);
+      }
     };
     fetchUrls();
   }, []);
+  const addUrl = (newUrl: UrlData) =>
+    setUrls((prevUrls) => [...prevUrls, newUrl]);
 
-  const addUrl = (newUrl: UrlData) => setUrls([...urls, newUrl]);
+  const AdminViewComponent = AdminView as ComponentType<{ urls: UrlData[] }>;
 
   return (
     <div>
@@ -29,7 +39,7 @@ function App() {
         {currentView === "home" ? (
           <HomeView urls={urls} addUrl={addUrl} />
         ) : (
-          <AdminView urls={urls} />
+          <AdminViewComponent urls={urls} />
         )}
       </main>
       <Footer />

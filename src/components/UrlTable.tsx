@@ -34,7 +34,11 @@ const URLTable: React.FC<{ urls: UrlData[] }> = ({ urls }) => {
             <td>
               <span className="stat-count">{url.clicks}</span> clicks
             </td>
-            <td>{new Date(url.created).toLocaleString()}</td>
+            <td>
+              {url.createdAt
+                ? new Date(url.createdAt).toLocaleDateString("en-IN")
+                : ""}
+            </td>
           </tr>
         ))}
       </tbody>
