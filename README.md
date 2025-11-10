@@ -107,10 +107,6 @@ The system follows this flow:
 5. The API responds with the **shortened URL** (e.g., `https://pathcut.vercel.app/abc123`).
 6. When users visit the short link, the server finds the original URL in MongoDB and **redirects** them there.
 
-![System Flow](./url_shortener_mongodb_flowchart.png)
-
----
-
 ## 🧩 API Endpoints
 
 ### 🔹 1. Shorten URL  
