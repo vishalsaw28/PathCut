@@ -1,8 +1,7 @@
 import { useState } from "react";
 import type { UrlData } from "../types";
 import CopyButton from "./CopyButton";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { shortenUrl } from "../services/api";
 
 interface HomeViewProps {
   urls: UrlData[];
@@ -14,17 +13,23 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
   const [shortUrl, setShortUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!longUrl) {
+    const trimmedUrl = longUrl.trim();
+    if (!trimmedUrl) {
       setError("Please enter a URL");
       return;
     }
 
+    const normalizedUrl = /^https?:\/\//i.test(trimmedUrl)
+      ? trimmedUrl
+      : `https://${trimmedUrl}`;
+
     try {
-      new URL(longUrl); // validate
+      new URL(normalizedUrl);
     } catch {
       setError("Please enter a valid URL");
       return;
@@ -32,34 +37,28 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
 
     setError("");
     setSuccess("");
+    setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/shorten`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ longUrl }),
+      const data = await shortenUrl(normalizedUrl);
+      setShortUrl(data.shortUrl);
+      setSuccess("URL shortened successfully!");
+      setLongUrl("");
+      addUrl({
+        id: urls.length + 1,
+        shortCode: data.shortCode,
+        shortUrl: data.shortUrl,
+        longUrl: data.longUrl,
+        clicks: data.clicks ?? 0,
+        created: new Date().toLocaleDateString("en-IN"),
+        _id: data._id,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setShortUrl(data.shortUrl); // backend shortUrl
-        setSuccess("URL shortened successfully!");
-        setLongUrl("");
-        addUrl({
-          id: urls.length + 1,
-          shortCode: data.shortCode,
-          shortUrl: data.shortUrl,
-          longUrl: data.longUrl,
-          clicks: data.clicks ?? 0,
-          created: new Date().toLocaleDateString("en-IN"),
-          _id: undefined,
-        });
-      } else {
-        setError(data.error || "Something went wrong");
-      }
-    } catch {
-      setError("Server error. Please try again later.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Server error. Please try again.";
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -85,8 +84,8 @@ const HomeView: React.FC<HomeViewProps> = ({ urls, addUrl }) => {
               required
             />
           </div>
-          <button type="submit" className="btn">
-            Shorten URL
+          <button type="submit" className="btn" disabled={isSubmitting}>
+            {isSubmitting ? "Shortening..." : "Shorten URL"}
           </button>
         </form>
 

@@ -12,11 +12,29 @@ const app: Application = express();
 const PORT = process.env.PORT || 5000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-const allowedOrigins = ["http://localhost:5173", "https://path-cut.vercel.app"];
+const allowedOrigins = new Set([
+  "http://localhost:5173",
+  "https://path-cut.vercel.app",
+]);
+
+const isLocalDevOrigin = (origin: string) =>
+  /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      if (allowedOrigins.has(origin) || isLocalDevOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -40,6 +58,11 @@ app.get("/api/ping", (_req, res) => {
   });
 });
 
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(` Server running at ${BASE_URL}`));
+app.listen(PORT, () => console.log(` Server running at ${BASE_URL}`));
+
+connectDB().catch((err) => {
+  console.error(
+    " MongoDB connection error. API is running but DB-backed routes will return 503 until MongoDB is reachable.",
+    err
+  );
 });

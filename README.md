@@ -1,39 +1,67 @@
-PathCut = URL- Shortner app
+# PathCut URL Shortener
 
-This app allows users to convert long, hard-to-share links into short and easy-to-remember URLs.
+PathCut converts long URLs into short, shareable links and redirects users back to the original destination.
 
-- Features
+## Features
 
-Shorten any valid URL into a unique short code
+- Shorten valid URLs into unique short codes.
+- Redirect short links to original URLs.
+- Track click count per short URL.
+- Health check endpoint (`/api/ping`) with MongoDB connection state.
+- Admin endpoint (`/api/admin/urls`) to list stored URLs.
+- CORS support for local development and deployed frontend.
+- Resilient local development behavior:
+  - Frontend API calls use timeout handling and clear error messages.
+  - Backend starts even if MongoDB is unavailable.
+  - In development, backend can use an in-memory fallback store when MongoDB is down.
 
-Redirect to the original URL via short code
+## Tech Stack
 
-Health check endpoint with database connection status
+- Frontend: React + TypeScript + Vite
+- Backend: Express + TypeScript
+- Database: MongoDB (Mongoose)
 
-MongoDB backend for persistence
+## Environment Variables
 
-CORS-enabled API for frontend usage
+Create a `.env` file in project root:
 
-Built with TypeScript for type-safety
+```env
+MONGO_URI=your_mongodb_connection_string
+DB_NAME=urlshortener
+PORT=5000
+BASE_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000
+# Optional: force in-memory fallback
+# USE_IN_MEMORY_STORE=true
+```
 
-- Architecture Overview
+Notes:
 
-The system follows this flow:
+- `VITE_API_URL` is used by the frontend for API requests.
+- `BASE_URL` is used as fallback, but API responses now prefer the current request host/protocol.
+- In-memory fallback is enabled by default in non-production mode.
 
-A client submits a long URL.
+## Run Locally
 
-The API (Express server) receives the request at the "shorten URL" endpoint.
+1. Install dependencies:
 
-The server validates the URL format.
+```bash
+npm install
+```
 
-MongoDB stores the record, including the original URL, the generated short code, and metadata such as creation date and click count.
+2. Start backend:
 
-The server responds with the newly created shortened URL.
+```bash
+npm run dev:server
+```
 
-When the user visits the shortened link, the server looks up the short code in MongoDB and redirects to the original URL.
+3. Start frontend:
 
-here is the flowchart image for all the operations i am doing in the pathcut
+```bash
+npm run dev
+```
 
+<<<<<<< HEAD
 ![alt text](url_shortener_mongodb_flowchart.png)
 
 ## ✨ Features
@@ -195,3 +223,68 @@ Make sure to set your environment variables in your hosting provider’s dashboa
 🧠 Implement custom short codes
 
 🧾 Add QR code generation for shortened URLs
+=======
+If `npm` is unavailable in your shell, you can run binaries directly:
+
+```bash
+node -r ts-node/register/transpile-only src/api/server.ts
+node ./node_modules/vite/bin/vite.js
+```
+
+## API Endpoints
+
+- `POST /api/shorten`
+  - Body: `{ "longUrl": "https://example.com/very/long/url" }`
+- `GET /api/admin/urls`
+- `GET /api/ping`
+- `GET /:shortCode`
+
+## Behavior When MongoDB Is Down
+
+- Server still listens on `PORT` (no connection-refused from backend startup failure).
+- In development mode, URL operations use in-memory storage fallback.
+- In production mode (without fallback), DB-backed routes return `503` with clear error JSON.
+- In-memory records are temporary and reset when server restarts.
+
+## Troubleshooting
+
+### Frontend shows `ERR_CONNECTION_REFUSED` for `localhost:5000`
+
+Cause: backend is not running on port `5000`.
+
+Checks:
+
+```bash
+curl http://127.0.0.1:5000/api/ping
+```
+
+If this fails, start backend again.
+
+### Backend logs MongoDB/Atlas connection errors
+
+Likely causes:
+
+- Current IP is not whitelisted in MongoDB Atlas Network Access.
+- Invalid `MONGO_URI`.
+
+Quick fix for local testing:
+
+- Keep backend running and use development in-memory fallback.
+
+Permanent fix:
+
+- Add your current IP (or temporary `0.0.0.0/0`) in Atlas Network Access.
+- Verify `MONGO_URI` and restart backend.
+
+## Architecture Flow
+
+1. User submits long URL from frontend.
+2. Backend validates and generates short code.
+3. Data is stored in MongoDB (or in-memory fallback in local/dev failure mode).
+4. Backend returns `shortUrl`.
+5. Visiting the short URL redirects to the original URL and increments click count.
+
+Flowchart:
+
+![PathCut flow](url_shortener_mongodb_flowchart.png)
+>>>>>>> 4257e0e (fixed the post error and also fixed the admin page)
