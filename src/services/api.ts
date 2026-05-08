@@ -5,6 +5,10 @@ const ENV_API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined)
   .replace(/\/+$/, "");
 
 const API_REQUEST_TIMEOUT_MS = 12000;
+const isLocalBrowserHost =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
 
 const buildBaseUrlCandidates = (): string[] => {
   const candidates: string[] = [];
@@ -16,8 +20,8 @@ const buildBaseUrlCandidates = (): string[] => {
 
   add(ENV_API_BASE_URL);
 
-  // Development fallback if the configured host is unavailable.
-  if (import.meta.env.DEV) {
+  // Development fallback only when running the frontend from localhost.
+  if (import.meta.env.DEV && isLocalBrowserHost) {
     add("http://localhost:5000");
     add("http://127.0.0.1:5000");
   }
@@ -31,12 +35,12 @@ const buildBaseUrlCandidates = (): string[] => {
 
 const fetchWithTimeout = async (
   input: RequestInfo | URL,
-  init?: RequestInit
+  init?: RequestInit,
 ): Promise<Response> => {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(
     () => controller.abort(),
-    API_REQUEST_TIMEOUT_MS
+    API_REQUEST_TIMEOUT_MS,
   );
 
   try {
@@ -101,8 +105,14 @@ const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
   }
 
   if (lastNetworkError) {
+    if (!isLocalBrowserHost) {
+      throw new Error(
+        "Unable to reach the configured API endpoint. Check deployed VITE_API_URL and backend availability.",
+      );
+    }
+
     throw new Error(
-      "Unable to reach the API. Check VITE_API_URL or run backend on http://localhost:5000."
+      "Unable to reach the API. Check VITE_API_URL or run backend on http://localhost:5000.",
     );
   }
 
