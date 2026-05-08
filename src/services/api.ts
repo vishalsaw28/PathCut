@@ -64,12 +64,24 @@ const parseErrorMessage = async (res: Response): Promise<string> => {
 
 const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const baseUrlCandidates = buildBaseUrlCandidates();
+  const hasMultipleCandidates = baseUrlCandidates.length > 1;
   let lastNetworkError: unknown = null;
 
-  for (const baseUrl of baseUrlCandidates) {
+  for (let index = 0; index < baseUrlCandidates.length; index += 1) {
+    const baseUrl = baseUrlCandidates[index];
     try {
       const response = await fetchWithTimeout(`${baseUrl}${path}`, init);
       if (!response.ok) {
+        const shouldTryNextCandidate =
+          import.meta.env.DEV &&
+          hasMultipleCandidates &&
+          index < baseUrlCandidates.length - 1 &&
+          response.status >= 500;
+
+        if (shouldTryNextCandidate) {
+          continue;
+        }
+
         const message = await parseErrorMessage(response);
         throw new Error(message);
       }
